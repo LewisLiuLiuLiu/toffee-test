@@ -4,8 +4,11 @@ toffee_test/__version.py
 # Picker Files
 reports/
 UT_*/
-picker_out_*/
+*.so.*
 *.dat
+
+# PDK model libraries (keep in PDK path, not in repo)
+tests/e2e/netlists/sky130.lib.spice*
 
 # Wave Files
 *.fst

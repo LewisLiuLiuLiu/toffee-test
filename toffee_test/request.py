@@ -48,6 +48,16 @@ class ToffeeRequest:
         """
         return self.request.config.getoption("--no-func-cov")
 
+    def create_env(self, env_cls, *args, **kwargs):
+        """
+        Create a verification environment that does not require a picker DUT.
+
+        Returns:
+            The env instance.
+        """
+        self.env = env_cls(*args, **kwargs)
+        return self.env
+
     def create_dut(
             self,
             dut_cls,
@@ -100,12 +110,12 @@ class ToffeeRequest:
         self.dut = dut_cls(*dut_extra_args, **dut_extra_kwargs)
 
         # Set clock name
-        if clock_name:
+        if clock_name and hasattr(self.dut, "InitClock"):
             self.dut.InitClock(clock_name)
 
         # Options for running without waveform/coverage generation from the DUT.
-        wave_format: str = self.dut.GetWaveFormat()
-        use_code_cov: bool = self.dut.GetCovMetrics() != 0
+        wave_format: str = self.dut.GetWaveFormat() if hasattr(self.dut, "GetWaveFormat") else ""
+        use_code_cov: bool = (self.dut.GetCovMetrics() != 0) if hasattr(self.dut, "GetCovMetrics") else False
 
         # Set default export name when generate report
         if self.__need_report():
@@ -133,7 +143,7 @@ class ToffeeRequest:
         if wave_format:
             if waveform_filename:
                 self.waveform_filename = ".".join((waveform_filename, wave_format))
-            if self.waveform_filename:
+            if self.waveform_filename and hasattr(self.dut, "SetWaveform"):
                 self.dut.SetWaveform(self.waveform_filename)
 
         # Set coverage name
@@ -142,7 +152,7 @@ class ToffeeRequest:
                 self.ignores = list(ignore_patterns)
             if coverage_filename:
                 self.coverage_filename = coverage_filename
-            if self.coverage_filename:
+            if self.coverage_filename and hasattr(self.dut, "SetCoverage"):
                 self.dut.SetCoverage(self.coverage_filename)
 
         return self.dut
@@ -168,16 +178,19 @@ class ToffeeRequest:
         Finish the request.
         """
 
-        if self.dut is not None:
+        if self.dut is not None and hasattr(self.dut, "Finish"):
             self.dut.Finish()
 
-            use_code_cov: bool = self.dut.GetCovMetrics() != 0
+            use_code_cov: bool = (self.dut.GetCovMetrics() != 0) if hasattr(self.dut, "GetCovMetrics") else False
 
             if self.__need_report():
                 if not self.__no_func():
                     set_func_coverage(request, self.cov_groups)
                 if use_code_cov:
                     set_line_coverage(request, self.coverage_filename, self.ignores)
+
+        if hasattr(self, "env") and hasattr(self.env, "finish"):
+            self.env.finish()
 
         for g in self.cov_groups:
             g.clear()

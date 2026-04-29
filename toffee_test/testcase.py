@@ -15,7 +15,10 @@ async def cancel_all_tasks():
     await asyncio.gather(*tasks, return_exceptions=True)
 
 
-def testcase(func):
+def testcase(func=None):
+    if func is None:
+        return lambda f: testcase(f)
+
     func.is_toffee_testcase = True
 
     @functools.wraps(func)
