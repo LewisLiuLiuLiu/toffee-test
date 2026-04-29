@@ -1,0 +1,288 @@
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/xschem/sky130_ef_ip__adc3v_12bit.sch
+.subckt sky130_ef_ip__adc3v_12bit vdda vssa vccd vssd adc_vrefH adc_vrefL adc_in adc_ena adc_dac_val[11] adc_dac_val[10]
++ adc_dac_val[9] adc_dac_val[8] adc_dac_val[7] adc_dac_val[6] adc_dac_val[5] adc_dac_val[4] adc_dac_val[3] adc_dac_val[2] adc_dac_val[1]
++ adc_dac_val[0] adc_comp_out adc_reset adc_vCM adc_trim adc_hold
+*.PININFO adc_comp_out:O adc_in:I adc_ena:I adc_reset:I vdda:B vssa:B vccd:B vssd:B adc_vrefH:B adc_vrefL:B adc_dac_val[11:0]:I
+*+ adc_trim:B adc_vCM:B adc_hold:I
+x1 adc_dac_val[0] adc_dac_val[1] adc_dac_val[2] adc_dac_val[3] adc_dac_val[4] adc_dac_val[5] adc_dac_val[6] adc_dac_val[7]
++ adc_dac_val[8] adc_dac_val[9] vdda vccd vssd vssa adc_vrefH adc_vrefL adc_aval adc_reset net1 adc_dac_val[10] adc_dac_val[11] adc_vCM adc_trim
++ adc_in adc_hold sky130_ef_ip__cdac3v_12bit
+* noconn #net1
+x2 adc_comp_out vccd vssd vdda vssa adc_aval adc_vCM adc_ena sky130_ef_ip__scomp3v
+.ends
+
+* expanding   symbol:  sky130_ef_ip__cdac3v_12bit.sym # of pins=25
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/sky130_ef_ip__cdac3v_12bit.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/sky130_ef_ip__cdac3v_12bit.sch
+.subckt sky130_ef_ip__cdac3v_12bit SELD0 SELD1 SELD2 SELD3 SELD4 SELD5 SELD6 SELD7 SELD8 SELD9 VDD DVDD DVSS VSS VH VL OUT RST
++ OUTNC SELD10 SELD11 VCM Vref VIN HOLD
+*.PININFO SELD0:I SELD1:I SELD2:I SELD3:I SELD4:I SELD5:I SELD6:I SELD7:I SELD8:I SELD9:I VDD:B DVDD:B DVSS:B VH:B VL:B VSS:B
+*+ RST:I OUT:O OUTNC:O SELD10:I SELD11:I VIN:B Vref:B VCM:B HOLD:I
+x4 D8 D0 D4 OUTNC D9 D5 D1 OUT D2 D6 VSS D7 D3 D10 D11 Vref EF_BANK_CAP_12
+x3 D0 sel0_3v3 D1 sel1_3v3 sel2_3v3 D2 sel3_3v3 sel4_3v3 D3 sel5_3v3 D4 sel6_3v3 sel7_3v3 D5 sel8_3v3 D6 sel9_3v3 D7 D8 D9 VDD
++ DVSS VH VL VSS D10 D11 sel10_3v3 sel11_3v3 VCM rst_3v3 EF_AMUX0201_ARRAY1
+x1 OUTNC OUT VDD VSS hold_3v3 VIN DVSS holdb_3v3 EF_SW_RST
+x2 SELD3 sel3_3v3 sel7_3v3 SELD7 sel11_3v3 SELD11 SELD6 sel6_3v3 SELD10 sel2_3v3 sel10_3v3 SELD2 sel1_3v3 sel5_3v3 SELD5 SELD1
++ SELD9 sel9_3v3 VDD DVSS sel0_3v3 SELD4 sel4_3v3 sel8_3v3 SELD8 DVDD SELD0 hold_3v3 HOLD rst_3v3 RST holdb_3v3 cdac_lvlshift_array
+.ends
+
+
+* expanding   symbol:  sky130_ef_ip__scomp3v.sym # of pins=8
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__ccomp3v/xschem/sky130_ef_ip__scomp3v.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__ccomp3v/xschem/sky130_ef_ip__scomp3v.sch
+.subckt sky130_ef_ip__scomp3v VOUT DVDD DVSS VDD VSS VINP VINM ENA
+*.PININFO VDD:I VOUT:O VSS:I VINP:I VINM:I DVDD:I DVSS:I ENA:I
+x3 ENA DVDD DVSS DVSS VDD VDD ena3v3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x1 VDD VBN VSS VINP VOUT VINM DVDD ena3v3 DVSS comparator_high_gain
+x2 VDD VSS VBN ena3v3 scomp_bias
+x4 ENA DVSS DVSS VDD VDD sky130_fd_sc_hvl__diode_2
+.ends
+
+
+* expanding   symbol:  EF_BANK_CAP_12.sym # of pins=16
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_BANK_CAP_12.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_BANK_CAP_12.sch
+.subckt EF_BANK_CAP_12 D8 D0 D4 VP1 D9 D5 D1 VP2 D2 D6 VSS D7 D3 D10 D11 Vref
+*.PININFO D0:B D1:B D2:B D3:B D4:B D5:B D6:B D7:B D8:B D9:B VSS:B VP1:B VP2:B D10:B D11:B Vref:B
+x4 VP1 VSS D0 D1 D2 D3 D4 D5 Vref EF_LSB_CAP
+x1 D8 D10 D9 VP2 D6 VSS D7 D11 EF_MSB_CAP
+x2 VP1 VP2 VSS EF_SC_CAP
+.ends
+
+
+* expanding   symbol:  EF_AMUX0201_ARRAY1.sym # of pins=31
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_AMUX0201_ARRAY1.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_AMUX0201_ARRAY1.sch
+.subckt EF_AMUX0201_ARRAY1 D0 SELD0 D1 SELD1 SELD2 D2 SELD3 SELD4 D3 SELD5 D4 SELD6 SELD7 D5 SELD8 D6 SELD9 D7 D8 D9 VDD DVSS VH
++ VL VSS D10 D11 SELD10 SELD11 VCM RST
+*.PININFO VDD:B DVSS:B VH:B VL:B SELD0:I SELD1:I SELD2:I SELD3:I SELD4:I SELD5:I SELD6:I SELD7:I SELD8:I SELD9:I VSS:B D0:B D1:B
+*+ D2:B D3:B D4:B D5:B D6:B D7:B D8:B D9:B SELD10:I SELD11:I D10:B D11:B VCM:B RST:B
+x2 VDD D0 VSS VH VL SELD0 DVSS VCM RST EF_AMUX21x
+x1 VDD D1 VSS VH VL SELD1 DVSS VCM RST EF_AMUX21x
+x3 VDD D2 VSS VH VL SELD2 DVSS VCM RST EF_AMUX21x
+x4 VDD D3 VSS VH VL SELD3 DVSS VCM RST EF_AMUX21x
+x5 VDD D4 VSS VH VL SELD4 DVSS VCM RST EF_AMUX21x
+x8 VDD D5 VSS VH VL SELD5 DVSS VCM RST EF_AMUX21x
+x9 VDD D6 VSS VH VL SELD6 DVSS VCM RST EF_AMUX21x
+x10 VDD D7 VSS VH VL SELD7 DVSS VCM RST EF_AMUX21x
+x11 VDD D8 VSS VH VL SELD8 DVSS VCM RST EF_AMUX21x
+x12 VDD D9 VSS VH VL SELD9 DVSS VCM RST EF_AMUX21x
+x6 VDD D10 VSS VH VL SELD10 DVSS VCM RST EF_AMUX21x
+x7 VDD D11 VSS VH VL SELD11 DVSS VCM RST EF_AMUX21x
+.ends
+
+
+* expanding   symbol:  EF_SW_RST.sym # of pins=8
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_SW_RST.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_SW_RST.sch
+.subckt EF_SW_RST VP1 VP2 AVDD AVSS HOLD VIN DVSS HOLDB
+*.PININFO HOLD:I AVDD:B AVSS:B VP2:B VP1:B VIN:B DVSS:B HOLDB:I
+x4 HOLDB HOLD AVSS VIN VP1 AVDD simple_analog_switch
+x5 HOLDB HOLD AVSS VP2 VIN AVDD simple_analog_switch
+.ends
+
+
+* expanding   symbol:  cdac_lvlshift_array.sym # of pins=32
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/cdac_lvlshift_array.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/cdac_lvlshift_array.sch
+.subckt cdac_lvlshift_array sel3 sel3_3p3 sel7_3p3 sel7 sel11_3p3 sel11 sel6 sel6_3p3 sel10 sel2_3p3 sel10_3p3 sel2 sel1_3p3
++ sel5_3p3 sel5 sel1 sel9 sel9_3p3 vdd3p3 vss sel0_3p3 sel4 sel4_3p3 sel8_3p3 sel8 vdd1p8 sel0 hold_3p3 hold rst_3p3 rst holdb_3p3
+*.PININFO sel0:I vdd3p3:B vss:B vdd1p8:B rst:I sel0_3p3:O rst_3p3:O sel1:I sel1_3p3:O sel2:I sel2_3p3:O sel3:I sel3_3p3:O sel4:I
+*+ sel4_3p3:O sel5:I sel5_3p3:O sel6:I sel6_3p3:O sel7:I sel7_3p3:O sel8:I sel8_3p3:O sel9:I sel9_3p3:O sel10:I sel10_3p3:O sel11:I sel11_3p3:O
+*+ hold:I hold_3p3:O holdb_3p3:O
+x19 rst vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x20 sel0 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x1 sel1 vdd1p8 vss vss vdd3p3 vdd3p3 sel1_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x2 sel1 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x3 sel0 vdd1p8 vss vss vdd3p3 vdd3p3 sel0_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x4 rst vdd1p8 vss vss vdd3p3 vdd3p3 rst_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x5 sel2 vdd1p8 vss vss vdd3p3 vdd3p3 sel2_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x6 sel2 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x7 sel3 vdd1p8 vss vss vdd3p3 vdd3p3 sel3_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x8 sel3 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x9 sel4 vdd1p8 vss vss vdd3p3 vdd3p3 sel4_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x10 sel4 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x11 sel5 vdd1p8 vss vss vdd3p3 vdd3p3 sel5_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x12 sel5 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x13 sel6 vdd1p8 vss vss vdd3p3 vdd3p3 sel6_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x14 sel6 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x15 sel7 vdd1p8 vss vss vdd3p3 vdd3p3 sel7_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x16 sel7 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x17 sel8 vdd1p8 vss vss vdd3p3 vdd3p3 sel8_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x18 sel8 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x21 sel9 vdd1p8 vss vss vdd3p3 vdd3p3 sel9_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x22 sel9 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x23 sel10 vdd1p8 vss vss vdd3p3 vdd3p3 sel10_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x24 sel10 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x25 sel11 vdd1p8 vss vss vdd3p3 vdd3p3 sel11_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x26 sel11 vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x27 hold vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__diode_2
+x28 hold vdd1p8 vss vss vdd3p3 vdd3p3 hold_3p3 sky130_fd_sc_hvl__lsbuflv2hv_1
+x29[14] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[13] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[12] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[11] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[10] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[9] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[8] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[7] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[6] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[5] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[4] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[3] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[2] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[1] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29[0] vss vss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_4
+x29 hold_3p3 vss vss vdd3p3 vdd3p3 holdb_3p3 sky130_fd_sc_hvl__inv_2
+* noconn vdd3p3
+* noconn vss
+* noconn vdd1p8
+.ends
+
+
+* expanding   symbol:  comparator_high_gain.sym # of pins=9
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__ccomp3v/xschem/comparator_high_gain.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__ccomp3v/xschem/comparator_high_gain.sch
+.subckt comparator_high_gain VDD VBN VSS VINP VOUT VINM DVDD ena3v3 DVSS
+*.PININFO VINP:I VINM:I VBN:I VDD:B VSS:B VOUT:O DVDD:B ena3v3:I DVSS:B
+XM3 net1 VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=2 W=5 nf=1 m=2
+XM19 net2 VOUTANALOG VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=5 nf=1 m=1
+XM20 net2 VOUTANALOG VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 m=1
+XM21 VOUT net2 DVDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 m=1
+XM22 VOUT net2 DVSS DVSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=5 nf=1 m=1
+XM1 net4 VINM net1 net1 sky130_fd_pr__nfet_g5v0d10v5 L=1 W=5 nf=1 m=4
+XM2 net3 VINP net1 net1 sky130_fd_pr__nfet_g5v0d10v5 L=1 W=5 nf=1 m=4
+XM4 net6 VINM net4 net1 sky130_fd_pr__nfet_05v0_nvt L=1 W=5 nf=1 m=10
+XM5 net5 VINP net3 net1 sky130_fd_pr__nfet_05v0_nvt L=1 W=5 nf=1 m=10
+XM8 VOUTANALOG ena3v3 VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=1 nf=1 m=1
+XM9 VOUTANALOG net5 VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=10 nf=2 m=2
+XM10 VOUTANALOG VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=2 W=4.8 nf=1 m=2
+XM11 net8 net6 VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=5 nf=1 m=2
+XM12 net7 net6 VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=5 nf=1 m=2
+Vmeas net8 net6 0
+.save i(vmeas)
+Vmeas1 net7 net5 0
+.save i(vmeas1)
+.ends
+
+
+* expanding   symbol:  scomp_bias.sym # of pins=4
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__ccomp3v/xschem/scomp_bias.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__ccomp3v/xschem/scomp_bias.sch
+.subckt scomp_bias VDD VSS VBN ena3v3
+*.PININFO VBN:O VDD:B VSS:B ena3v3:I
+XM3 net1 net2 VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=2 W=20 nf=1 m=1
+XM4 net3 net1 net2 VDD sky130_fd_pr__pfet_g5v0d10v5 L=2 W=20 nf=1 m=1
+XM5 VBN VBN net2 VDD sky130_fd_pr__pfet_g5v0d10v5 L=15 W=1 nf=1 m=1
+XM1 VBN VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=2 W=5 nf=1 m=1
+XM2 net1 VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=2 W=5 nf=1 m=1
+XM8 net3 ena3v3 VBN VSS sky130_fd_pr__nfet_g5v0d10v5 L=2 W=5 nf=1 m=1
+XR2 net2 VDD VSS sky130_fd_pr__res_high_po_1p41 L=135 mult=1 m=1
+.ends
+
+
+* expanding   symbol:  EF_LSB_CAP.sym # of pins=9
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_LSB_CAP.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_LSB_CAP.sch
+.subckt EF_LSB_CAP VP1 VSS D0 D1 D2 D3 D4 D5 Vref
+*.PININFO VP1:B D0:B D1:B D2:B D3:B D4:B VSS:B D5:B Vref:B
+XC1 VP1 Vref sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=1
+XC2 VP1 D0 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=1
+XC6 VSS VSS sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=26
+XC8 Vref VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=1
+XC3 VP1 D1 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=2
+XC4 VP1 D2 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=4
+XC5 VP1 D3 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=8
+XC7 VP1 D4 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=16
+XC9 D0 VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=1
+XC10 D1 VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=2
+XC11 D2 VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=4
+XC12 D3 VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=8
+XC13 D4 VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=16
+XC14 VSS VSS sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=26
+XC15 VP1 D5 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=32
+XC16 D5 VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=32
+.ends
+
+
+* expanding   symbol:  EF_MSB_CAP.sym # of pins=8
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_MSB_CAP.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_MSB_CAP.sch
+.subckt EF_MSB_CAP D8 D10 D9 VP2 D6 VSS D7 D11
+*.PININFO D10:B D6:B D7:B D8:B D9:B VP2:B VSS:B D11:B
+XC2 D6 VP2 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=1
+XC3 VSS VSS sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=27
+XC4 VSS VSS sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=27
+XC6 VP2 D6 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=1
+XC7 VP2 D7 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=2
+XC8 VP2 D8 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=4
+XC9 VP2 D9 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=8
+XC10 VP2 D10 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=16
+XC11 D7 VP2 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=2
+XC12 D8 VP2 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=4
+XC13 D9 VP2 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=8
+XC14 D10 VP2 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=16
+XC1 VP2 D11 sky130_fd_pr__cap_mim_m3_1 W=7 L=7 m=32
+XC5 D11 VP2 sky130_fd_pr__cap_mim_m3_2 W=7 L=7 m=32
+.ends
+
+
+* expanding   symbol:  EF_SC_CAP.sym # of pins=3
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_SC_CAP.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_SC_CAP.sch
+.subckt EF_SC_CAP VP1 VP2 VSS
+*.PININFO VP1:B VP2:B VSS:B
+XC13 VP1 VP2 sky130_fd_pr__cap_mim_m3_1 W=7 L=7.055 m=1
+XC6 VSS VSS sky130_fd_pr__cap_mim_m3_1 W=7 L=7.055 m=9
+XC1 VSS VSS sky130_fd_pr__cap_mim_m3_2 W=7 L=7.055 m=9
+XC2 VP2 VP1 sky130_fd_pr__cap_mim_m3_2 W=7 L=7.055 m=1
+.ends
+
+
+* expanding   symbol:  EF_AMUX21x.sym # of pins=9
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_AMUX21x.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/xschem/EF_AMUX21x.sch
+.subckt EF_AMUX21x vdd3p3 vo vss a b sel dvss cm selcm
+*.PININFO sel:I vo:B vdd3p3:B vss:B dvss:B a:B b:B cm:B selcm:I
+x2 sel dvss dvss vdd3p3 vdd3p3 net1 sky130_fd_sc_hvl__inv_2
+x7 selp net2 vss vo a vdd3p3 simple_analog_switch_2
+x8 net4 net3 vss vo cm vdd3p3 simple_analog_switch_2
+x9 selb net5 vss vo b vdd3p3 simple_analog_switch_2
+x11 selp dvss dvss vdd3p3 vdd3p3 net2 sky130_fd_sc_hvl__inv_2
+x14 selcm dvss dvss vdd3p3 vdd3p3 net3 sky130_fd_sc_hvl__inv_2
+x17 selb dvss dvss vdd3p3 vdd3p3 net5 sky130_fd_sc_hvl__inv_2
+x10 net3 dvss dvss vdd3p3 vdd3p3 net4 sky130_fd_sc_hvl__inv_2
+x1 selcm net1 dvss dvss vdd3p3 vdd3p3 selb sky130_fd_sc_hvl__nor2_1
+x3 sel selcm dvss dvss vdd3p3 vdd3p3 selp sky130_fd_sc_hvl__nor2_1
+x4[3] dvss dvss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_8
+x4[2] dvss dvss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_8
+x4[1] dvss dvss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_8
+x4[0] dvss dvss vdd3p3 vdd3p3 sky130_fd_sc_hvl__decap_8
+* noconn dvss
+.ends
+
+
+* expanding   symbol:  simple_analog_switch.sym # of pins=6
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/ip/sky130_ef_ip__analog_switches/xschem/simple_analog_switch.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/ip/sky130_ef_ip__analog_switches/xschem/simple_analog_switch.sch
+.subckt simple_analog_switch on off vss out in vdd
+*.PININFO on:I out:B vdd:B vss:B in:B off:I
+XM1 in on out vss sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=2 m=1
+XM2 in off out vdd sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=4 m=1
+XM3 out off out vss sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 m=1
+XM4 out on out vdd sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=2 m=1
+XM5 in off in vss sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 m=1
+XM6 in on in vdd sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=2 m=1
+.ends
+
+
+* expanding   symbol:  simple_analog_switch_2.sym # of pins=6
+** sym_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/ip/sky130_ef_ip__analog_switches/xschem/simple_analog_switch_2.sym
+** sch_path: /home/tim/gits/sky130_ef_ip__adc3v_12bit/ip/sky130_ef_ip__cdac3v_12bit/ip/sky130_ef_ip__analog_switches/xschem/simple_analog_switch_2.sch
+.subckt simple_analog_switch_2 on off vss out in vdd
+*.PININFO on:I out:B vdd:B vss:B in:B off:I
+XM1 in on out vss sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=4 m=1
+XM2 in off out vdd sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=40 nf=8 m=1
+.ends
+
+.end

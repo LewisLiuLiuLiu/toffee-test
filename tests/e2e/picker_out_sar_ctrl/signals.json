@@ -1,0 +1,62 @@
+{
+    "clk": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "input",
+        "_": true
+    },
+    "cmp": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "input",
+        "_": true
+    },
+    "dac_rst": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "output",
+        "_": true
+    },
+    "data": {
+        "High": 7,
+        "Low": 0,
+        "Pin": "output",
+        "_": true
+    },
+    "en": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "input",
+        "_": true
+    },
+    "eoc": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "output",
+        "_": true
+    },
+    "rst_n": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "input",
+        "_": true
+    },
+    "sample_n": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "output",
+        "_": true
+    },
+    "soc": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "input",
+        "_": true
+    },
+    "swidth": {
+        "High": 3,
+        "Low": 0,
+        "Pin": "input",
+        "_": true
+    }
+}
