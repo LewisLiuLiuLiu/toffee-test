@@ -210,3 +210,84 @@ async def test_d2a_param_gain_select(xyce_sim):
         assert v1 > v0, f"Expected v1 ({v1:.3f}) > v0 ({v0:.3f}) after gain change"
     finally:
         sim.finish()
+
+
+# ---- A2D threshold -> Verilog inverter (picker DUT) ----
+
+
+class InverterWrapper:
+    """Bridges A2D result to a picker-generated Verilog inverter DUT.
+
+    The inverter is pure combinational (assign y = ~a), so no clock needed.
+    """
+
+    def __init__(self, picker_dut):
+        object.__setattr__(self, '_dut', picker_dut)
+        self.vin_ctrl = 0      # D2A: set by test
+        self.vout_high = 0     # A2D: MixedSignalSimulator writes via setattr
+
+    def sync(self):
+        """Push A2D result to Verilog input and evaluate combinational outputs."""
+        self._dut.a.value = self.vout_high
+        self._dut.Step(1)
+
+    @property
+    def y(self):
+        return self._dut.y.value
+
+
+@pytest.mark.e2e
+@pytest.mark.picker
+@toffee_test.testcase
+async def test_rc_a2d_inverter(analog_sim):
+    """A2D threshold -> Verilog inverter: V(out) crosses 0.9V, inverter flips.
+
+    Steps:
+      1. V(out)=0V      -> vout_high=0 -> inverter y=1
+      2. Charge to 5ns   -> vout_high=1 -> inverter y=0
+      3. Discharge to 10ns -> vout_high=0 -> inverter y=1
+    """
+    try:
+        from .picker_out_inverter import DUTinverter
+    except ImportError:
+        pytest.skip("picker_out_inverter not built")
+
+    netlist = _write_netlist(analog_sim.backend, RC_XYCE, RC_NGSPICE)
+    sim = analog_sim.create(netlist)
+    try:
+        picker_dut = DUTinverter()
+        picker_dut.Step(1)  # initial evaluation
+        dut = InverterWrapper(picker_dut)
+
+        mapping = PortMapping()
+        mapping.add_digital("vin_ctrl", PortDirection.OUT)
+        mapping.add_analog("V_IN", PortDirection.IN)
+        mapping.d2a("vin_ctrl", "V_IN", scale=1.8)
+        mapping.add_digital("vout_high", PortDirection.IN)
+        mapping.add_analog("V(out)", PortDirection.OUT)
+        mapping.a2d("V(out)", "vout_high", threshold=0.9)
+
+        ms = MixedSignalSimulator(
+            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
+        )
+
+        # Step 1: initial -- V(out)=0V, below threshold
+        assert dut.vout_high == 0
+        dut.sync()
+        assert dut.y == 1, f"Expected y=1 (a=0 inverted), got y={dut.y}"
+
+        # Step 2: charge -- V(out) > 0.9V after 5ns
+        dut.vin_ctrl = 1
+        ms.advance_to(5e-9)
+        assert dut.vout_high == 1, f"Expected vout_high=1 after charge, got {dut.vout_high}"
+        dut.sync()
+        assert dut.y == 0, f"Expected y=0 (a=1 inverted), got y={dut.y}"
+
+        # Step 3: discharge -- V(out) falls back below 0.9V after 10ns
+        dut.vin_ctrl = 0
+        ms.advance_to(10e-9)
+        assert dut.vout_high == 0, f"Expected vout_high=0 after discharge, got {dut.vout_high}"
+        dut.sync()
+        assert dut.y == 1, f"Expected y=1 (a=0 inverted), got y={dut.y}"
+    finally:
+        sim.finish()

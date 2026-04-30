@@ -1,0 +1,14 @@
+{
+    "a": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "input",
+        "_": true
+    },
+    "y": {
+        "High": -1,
+        "Low": 0,
+        "Pin": "output",
+        "_": true
+    }
+}
