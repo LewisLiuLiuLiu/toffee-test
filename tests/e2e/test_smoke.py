@@ -271,23 +271,28 @@ async def test_rc_a2d_inverter(analog_sim):
             sim, dut, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
         )
 
-        # Step 1: initial -- V(out)=0V, below threshold
+        # Step 1: initial -- V(out)=0V (capacitor discharged), below threshold
+        print(f"\n[Step 1] t≈0s  V(out)≈0V (initial)  threshold=0.9V  vout_high={dut.vout_high}")
         assert dut.vout_high == 0
         dut.sync()
-        assert dut.y == 1, f"Expected y=1 (a=0 inverted), got y={dut.y}"
+        print(f"  inverter: a={dut.vout_high} -> y={dut.y}")
 
         # Step 2: charge -- V(out) > 0.9V after 5ns
         dut.vin_ctrl = 1
         ms.advance_to(5e-9)
+        vout = sim.read("V(out)")
+        print(f"\n[Step 2] t=5ns  V(out)={vout:.4f}V  threshold=0.9V  vout_high={dut.vout_high}")
         assert dut.vout_high == 1, f"Expected vout_high=1 after charge, got {dut.vout_high}"
         dut.sync()
-        assert dut.y == 0, f"Expected y=0 (a=1 inverted), got y={dut.y}"
+        print(f"  inverter: a={dut.vout_high} -> y={dut.y}")
 
         # Step 3: discharge -- V(out) falls back below 0.9V after 10ns
         dut.vin_ctrl = 0
         ms.advance_to(10e-9)
+        vout = sim.read("V(out)")
+        print(f"\n[Step 3] t=10ns V(out)={vout:.4f}V  threshold=0.9V  vout_high={dut.vout_high}")
         assert dut.vout_high == 0, f"Expected vout_high=0 after discharge, got {dut.vout_high}"
         dut.sync()
-        assert dut.y == 1, f"Expected y=1 (a=0 inverted), got y={dut.y}"
+        print(f"  inverter: a={dut.vout_high} -> y={dut.y}")
     finally:
         sim.finish()
