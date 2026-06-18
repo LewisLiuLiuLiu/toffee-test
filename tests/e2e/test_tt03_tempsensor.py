@@ -15,7 +15,7 @@ import tempfile
 import pytest
 import toffee_test
 
-from toffee.mixed_signal.mixed_signal_simulator import MixedSignalSimulator
+from toffee.mixed_signal.mixed_signal_orchestrator import MixedSignalOrchestrator
 from toffee.mixed_signal.port_mapping import PortMapping, PortDirection
 from toffee.mixed_signal.step_strategy import StepExactStrategy
 
@@ -44,6 +44,12 @@ class TempSensorDut:
         self.st5 = 0
         self.st6 = 0
         self.st7 = 0
+
+    def Step(self, cycles=1):
+        pass
+
+    def RefreshComb(self):
+        pass
 
 
 def _generate_tt03_testbench() -> str:
@@ -111,7 +117,7 @@ def ngspice_sim(request, tmp_path):
 @pytest.mark.sky130
 @toffee_test.testcase
 async def test_tempsensor_circuit_loads(ngspice_sim):
-    """Verify PEX circuit loads in ngspice and MixedSignalSimulator initializes.
+    """Verify PEX circuit loads in ngspice and MixedSignalOrchestrator initializes.
 
     The PEX netlist (17k transistors) loads in <1s, but the DC operating point
     computation takes >2min, making step-by-step simulation infeasible in CI.
@@ -141,9 +147,9 @@ async def test_tempsensor_circuit_loads(ngspice_sim):
         mapping.add_analog(f"V(st{i})", PortDirection.OUT)
         mapping.a2d(f"V(st{i})", d_name, threshold=0.9)
 
-    # Construct the MixedSignalSimulator (no simulation step)
-    ms = MixedSignalSimulator(
-        sim, dut, mapping,
+    # Construct the MixedSignalOrchestrator (no simulation step)
+    ms = MixedSignalOrchestrator(
+        dut, sim, mapping,
         step_strategy=StepExactStrategy(max_step=50e-6),
     )
     # NOTE: We intentionally do NOT call ms.advance_to() because the PEX

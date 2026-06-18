@@ -8,7 +8,7 @@ import tempfile
 import pytest
 import toffee_test
 
-from toffee.mixed_signal.mixed_signal_simulator import MixedSignalSimulator
+from toffee.mixed_signal.mixed_signal_orchestrator import MixedSignalOrchestrator
 from toffee.mixed_signal.port_mapping import PortMapping, PortDirection
 from toffee.mixed_signal.step_strategy import StepExactStrategy
 
@@ -140,6 +140,16 @@ class SarDutWrapper:
         else:
             setattr(self._ctrl, name, value)
 
+    def Step(self, cycles=1):
+        """Advance the SAR controller by *cycles* clock edges."""
+        for _ in range(cycles):
+            self._ctrl.clock_step()
+        self.ena_out = self._ctrl.en
+
+    def RefreshComb(self):
+        """No-op: the Python FSM has no combinational-only update path."""
+        pass
+
     def start_conversion(self):
         self._ctrl.en = 1
         self.ena_out = 1
@@ -147,10 +157,6 @@ class SarDutWrapper:
 
     def clear_soc(self):
         self._ctrl.soc = 0
-
-    def clock_step(self):
-        self._ctrl.clock_step()
-        self.ena_out = self._ctrl.en
 
 
 @pytest.mark.e2e
@@ -170,8 +176,8 @@ async def test_sar_full_conversion(analog_sim):
     try:
         dut = SarDutWrapper(size=12)
         mapping = _build_sar_mapping(size=12)
-        ms = MixedSignalSimulator(
-            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=CLK_HALF_PERIOD)
+        ms = MixedSignalOrchestrator(
+            dut, sim, mapping, step_strategy=StepExactStrategy(max_step=CLK_HALF_PERIOD)
         )
 
         t = 0.0
@@ -180,19 +186,19 @@ async def test_sar_full_conversion(analog_sim):
         dut.start_conversion()
         t += CLK_HALF_PERIOD
         ms.advance_to(t)
-        dut.clock_step()
+        dut.Step()
 
         t += CLK_HALF_PERIOD
         ms.advance_to(t)
         dut.clear_soc()
-        dut.clock_step()
+        dut.Step()
 
         # Run through SAMPLE + RST + START + CONV (12 bits) + DONE
         # Max cycles: 1 (SAMPLE) + swidth+1 (RST) + 1 (START) + 12 (CONV) + 1 (DONE) ~ 20
         for _ in range(30):
             t += CLK_HALF_PERIOD
             ms.advance_to(t)
-            dut.clock_step()
+            dut.Step()
             if dut.eoc:
                 break
 
@@ -226,24 +232,24 @@ async def test_sar_midscale(analog_sim):
     try:
         dut = SarDutWrapper(size=12)
         mapping = _build_sar_mapping(size=12)
-        ms = MixedSignalSimulator(
-            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=CLK_HALF_PERIOD)
+        ms = MixedSignalOrchestrator(
+            dut, sim, mapping, step_strategy=StepExactStrategy(max_step=CLK_HALF_PERIOD)
         )
 
         t = 0.0
         dut.start_conversion()
         t += CLK_HALF_PERIOD
         ms.advance_to(t)
-        dut.clock_step()
+        dut.Step()
         t += CLK_HALF_PERIOD
         ms.advance_to(t)
         dut.clear_soc()
-        dut.clock_step()
+        dut.Step()
 
         for _ in range(30):
             t += CLK_HALF_PERIOD
             ms.advance_to(t)
-            dut.clock_step()
+            dut.Step()
             if dut.eoc:
                 break
 
@@ -263,7 +269,7 @@ async def test_sar_midscale(analog_sim):
 class PickerSarWrapper:
     """Adapts picker DUTsar_ctrl (SIZE=8) to plain-attribute interface.
 
-    The MixedSignalSimulator reads/writes DUT attributes by name.
+    The MixedSignalOrchestrator reads/writes DUT attributes by name.
     Picker DUT uses XPin objects; this wrapper bridges them with
     individual bit properties for D2A mapping.
     """
@@ -318,9 +324,14 @@ class PickerSarWrapper:
     @property
     def data(self): return self._dut.data.value
 
-    def step_clock(self):
-        """Advance the picker DUT by one clock edge."""
-        self._dut.Step(1)
+    def Step(self, cycles=1):
+        """Advance the picker DUT by *cycles* clock edges."""
+        self._dut.Step(cycles)
+
+    def RefreshComb(self):
+        """Evaluate combinational logic without clock toggle."""
+        if hasattr(self._dut, "RefreshComb"):
+            self._dut.RefreshComb()
 
 
 def _build_picker_sar_mapping(size: int = 8) -> PortMapping:
@@ -374,8 +385,8 @@ async def test_sar_full_conversion_picker(analog_sim):
         dut = PickerSarWrapper(picker_dut)
         mapping = _build_picker_sar_mapping(size=8)
 
-        ms = MixedSignalSimulator(
-            sim_analog, dut, mapping,
+        ms = MixedSignalOrchestrator(
+            dut, sim_analog, mapping,
             step_strategy=StepExactStrategy(max_step=CLK_HALF_PERIOD)
         )
 
@@ -386,18 +397,18 @@ async def test_sar_full_conversion_picker(analog_sim):
 
         t = CLK_HALF_PERIOD
         ms.advance_to(t)
-        dut.step_clock()
+        dut.Step()
 
         t += CLK_HALF_PERIOD
         picker_dut.soc.value = 0
         ms.advance_to(t)
-        dut.step_clock()
+        dut.Step()
 
         # Run conversion
         for _ in range(30):
             t += CLK_HALF_PERIOD
             ms.advance_to(t)
-            dut.step_clock()
+            dut.Step()
             if dut.eoc == 1:
                 break
 

@@ -14,7 +14,7 @@ class SarCtrlDut:
     SIZE is the ADC resolution in bits. On each call to clock_step(),
     the FSM advances one clock cycle. Digital outputs (data, eoc,
     sample_n, dac_rst) are updated and can be read by PortMapping.
-    The comparator result (cmp) is written by MixedSignalSimulator A2D.
+    The comparator result (cmp) is written by MixedSignalOrchestrator A2D.
     """
 
     IDLE = 0

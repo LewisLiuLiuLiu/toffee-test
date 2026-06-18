@@ -9,7 +9,7 @@ import tempfile
 import pytest
 import toffee_test
 
-from toffee.mixed_signal.mixed_signal_simulator import MixedSignalSimulator
+from toffee.mixed_signal.mixed_signal_orchestrator import MixedSignalOrchestrator
 from toffee.mixed_signal.port_mapping import PortMapping, PortDirection
 from toffee.mixed_signal.step_strategy import StepExactStrategy
 
@@ -51,6 +51,12 @@ class RcDut:
     def __init__(self):
         self.vin_ctrl = 0
 
+    def Step(self, cycles=1):
+        pass
+
+    def RefreshComb(self):
+        pass
+
 
 @pytest.mark.e2e
 @toffee_test.testcase
@@ -67,11 +73,11 @@ async def test_rc_d2a_voltage(analog_sim):
         mapping.add_analog("V_IN", PortDirection.IN)
         mapping.d2a("vin_ctrl", "V_IN", scale=1.8)
 
-        ms = MixedSignalSimulator(
-            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
+        ms = MixedSignalOrchestrator(
+            dut, sim, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
         )
         ms.advance_to(5e-9)  # 5 * RC = 5 * 1k * 1p = 5ns
-        vout = ms.read("V(out)")
+        vout = sim.read("V(out)")
         assert vout > 1.0, f"Expected V(out) > 1.0V after 5ns, got {vout:.4f}"
     finally:
         sim.finish()
@@ -83,6 +89,12 @@ class RcBidirDut:
     def __init__(self):
         self.vin_ctrl = 0
         self.charge_done = 0
+
+    def Step(self, cycles=1):
+        pass
+
+    def RefreshComb(self):
+        pass
 
 
 RC_BIDIR_XYCE = """\
@@ -122,8 +134,8 @@ async def test_rc_bidirectional(analog_sim):
         mapping.add_analog("V(out)", PortDirection.OUT)
         mapping.a2d("V(out)", "charge_done", threshold=0.9)
 
-        ms = MixedSignalSimulator(
-            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
+        ms = MixedSignalOrchestrator(
+            dut, sim, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
         )
 
         # At t=0 capacitor is uncharged
@@ -143,6 +155,12 @@ async def test_rc_bidirectional(analog_sim):
 class GainDut:
     def __init__(self):
         self.gain_sel = 0
+
+    def Step(self, cycles=1):
+        pass
+
+    def RefreshComb(self):
+        pass
 
 
 GAIN_XYCE = """\
@@ -193,19 +211,19 @@ async def test_d2a_param_gain_select(xyce_sim):
         # code 0 -> R2=1k (Vout=0.5V), code 1 -> R2=10k (Vout~0.91V)
         mapping.d2a_param("gain_sel", "R2:R", mapping={0: 1e3, 1: 10e3})
 
-        ms = MixedSignalSimulator(
-            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=0.5e-9)
+        ms = MixedSignalOrchestrator(
+            dut, sim, mapping, step_strategy=StepExactStrategy(max_step=0.5e-9)
         )
 
         # Code 0: R2=1k, divider = 1k/(1k+1k) = 0.5
         dut.gain_sel = 0
         ms.advance_to(1e-9)
-        v0 = ms.read("V(out)")
+        v0 = sim.read("V(out)")
 
         # Code 1: R2=10k, divider = 10k/(1k+10k) ~ 0.91
         dut.gain_sel = 1
         ms.advance_to(2e-9)
-        v1 = ms.read("V(out)")
+        v1 = sim.read("V(out)")
 
         assert v1 > v0, f"Expected v1 ({v1:.3f}) > v0 ({v0:.3f}) after gain change"
     finally:
@@ -224,7 +242,15 @@ class InverterWrapper:
     def __init__(self, picker_dut):
         object.__setattr__(self, '_dut', picker_dut)
         self.vin_ctrl = 0      # D2A: set by test
-        self.vout_high = 0     # A2D: MixedSignalSimulator writes via setattr
+        self.vout_high = 0     # A2D: MixedSignalOrchestrator writes via setattr
+
+    def Step(self, cycles=1):
+        """Advance the picker DUT by one clock edge."""
+        self._dut.Step(cycles)
+
+    def RefreshComb(self):
+        """Evaluate combinational logic without clock toggle."""
+        self._dut.RefreshComb()
 
     def sync(self):
         """Push A2D result to Verilog input and evaluate combinational outputs."""
@@ -267,8 +293,8 @@ async def test_rc_a2d_inverter(analog_sim):
         mapping.add_analog("V(out)", PortDirection.OUT)
         mapping.a2d("V(out)", "vout_high", threshold=0.9)
 
-        ms = MixedSignalSimulator(
-            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
+        ms = MixedSignalOrchestrator(
+            dut, sim, mapping, step_strategy=StepExactStrategy(max_step=1e-9)
         )
 
         # Step 1: initial -- V(out)=0V (capacitor discharged), below threshold

@@ -12,7 +12,7 @@ import tempfile
 import pytest
 import toffee_test
 
-from toffee.mixed_signal.mixed_signal_simulator import MixedSignalSimulator
+from toffee.mixed_signal.mixed_signal_orchestrator import MixedSignalOrchestrator
 from toffee.mixed_signal.port_mapping import PortMapping, PortDirection
 from toffee.mixed_signal.step_strategy import StepExactStrategy
 
@@ -35,6 +35,12 @@ class DacDut:
         self.ena = 1
         self.clk = 0
         self.rst_n = 1
+
+    def Step(self, cycles=1):
+        pass
+
+    def RefreshComb(self):
+        pass
 
 
 def _generate_tt05_testbench(backend: str) -> str:
@@ -160,8 +166,8 @@ async def test_dac_3bit_monotonic(analog_sim):
         dut = DacDut()
         mapping = _build_dac_mapping()
 
-        ms = MixedSignalSimulator(
-            sim, dut, mapping, step_strategy=StepExactStrategy(max_step=5e-9)
+        ms = MixedSignalOrchestrator(
+            dut, sim, mapping, step_strategy=StepExactStrategy(max_step=5e-9)
         )
 
         voltages = []
@@ -170,7 +176,7 @@ async def test_dac_3bit_monotonic(analog_sim):
             dut.ui_in_1 = (code >> 1) & 1
             dut.ui_in_2 = (code >> 2) & 1
             ms.advance_to((code + 1) * 10e-9)
-            v = ms.read("V(ua_1)")
+            v = sim.read("V(ua_1)")
             voltages.append(v)
 
         # Check monotonicity (allow small tolerance for transient settling)
